@@ -1,13 +1,16 @@
 Summary:	Portable implementation of the kqueue() and kevent() system calls
 Summary(pl.UTF-8):	Przenośna implementacja wywołań systemowych kqueue() i kevent()
 Name:		libkqueue
-Version:	2.0.1
+Version:	2.6.3
 Release:	1
-License:	BSD (header), MIT-like (implementation)
+License:	BSD (header), ISC (implementation)
 Group:		Libraries
-Source0:	http://downloads.sourceforge.net/libkqueue/%{name}-%{version}.tar.gz
-# Source0-md5:	3d939aa5fa83a870aee71f2181b22994
-URL:		http://sourceforge.net/projects/libkqueue/
+#Source0Download: https://github.com/mheily/libkqueue/releases
+Source0:	https://github.com/mheily/libkqueue/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	1e6b8d87ad37af2e99877ebd32b598f8
+URL:		https://github.com/mheily/libkqueue
+BuildRequires:	cmake >= 3.0
+BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -51,24 +54,17 @@ Statyczna biblioteka libkqueue.
 %setup -q
 
 %build
-# NOTE: not autoconf configure
-CC="%{__cc}" \
-CFLAGS="%{rpmcflags}" \
-CPPFLAGS="%{rpmcppflags}" \
-LDFLAGS="%{rpmldflags}" \
-./configure \
-	--build=%{_target_platform} \
-	--prefix=%{_prefix} \
-	--libdir=%{_libdir}
-%{__make}
+%cmake -B build \
+	-DENABLE_SHARED=ON \
+	-DENABLE_STATIC=ON
+
+%{__make} -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
+%{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-install libkqueue.a $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -79,15 +75,13 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(755,root,root) %{_libdir}/libkqueue.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libkqueue.so.0
+%attr(755,root,root) %{_libdir}/libkqueue.so.0
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libkqueue.so
+%{_libdir}/libkqueue.so
 %{_includedir}/kqueue
 %{_pkgconfigdir}/libkqueue.pc
-%{_mandir}/man2/kevent.2*
 %{_mandir}/man2/kqueue.2*
 
 %files static
