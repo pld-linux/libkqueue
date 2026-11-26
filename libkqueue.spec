@@ -1,13 +1,13 @@
 Summary:	Portable implementation of the kqueue() and kevent() system calls
 Summary(pl.UTF-8):	Przenośna implementacja wywołań systemowych kqueue() i kevent()
 Name:		libkqueue
-Version:	2.6.3
+Version:	2.7.0
 Release:	1
 License:	BSD (header), ISC (implementation)
 Group:		Libraries
 #Source0Download: https://github.com/mheily/libkqueue/releases
 Source0:	https://github.com/mheily/libkqueue/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	1e6b8d87ad37af2e99877ebd32b598f8
+# Source0-md5:	f08b6a3dede0576e4e40e325ed98249f
 URL:		https://github.com/mheily/libkqueue
 BuildRequires:	cmake >= 3.0
 BuildRequires:	rpmbuild(macros) >= 1.605
@@ -54,7 +54,9 @@ Statyczna biblioteka libkqueue.
 %setup -q
 
 %build
+# 2.7.0 tarball still hardcodes PROJECT_VERSION 2.6.3 (ends up in libkqueue.pc)
 %cmake -B build \
+	-DVERSION_OVERRIDE=%{version} \
 	-DENABLE_SHARED=ON \
 	-DENABLE_STATIC=ON
 
