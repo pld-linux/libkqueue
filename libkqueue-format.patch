@@ -1,0 +1,20 @@
+# %lu does not match long long __syscall_slong_t on x32 (-Werror=format)
+--- a/src/linux/timer.c	2026-11-26 09:48:43.319999999 +0100
++++ b/src/linux/timer.c	2026-11-26 09:48:43.426662807 +0100
+@@ -68,11 +68,11 @@
+     static __thread char buf[1024];
+ 
+     snprintf(buf, sizeof(buf),
+-            "itimer: [ interval=%lu s %lu ns, next expire=%lu s %lu ns ]",
+-            ts->it_interval.tv_sec,
+-            ts->it_interval.tv_nsec,
+-            ts->it_value.tv_sec,
+-            ts->it_value.tv_nsec
++            "itimer: [ interval=%llu s %llu ns, next expire=%llu s %llu ns ]",
++            (unsigned long long)ts->it_interval.tv_sec,
++            (unsigned long long)ts->it_interval.tv_nsec,
++            (unsigned long long)ts->it_value.tv_sec,
++            (unsigned long long)ts->it_value.tv_nsec
+            );
+ 
+     return (buf);
